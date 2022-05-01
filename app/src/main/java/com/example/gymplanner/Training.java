@@ -11,6 +11,9 @@ public class Training implements Parcelable {
     private String longDesc;
     private String imageURL;
 
+    public Training() {
+    }
+
     public Training(int ID, String name, String shortDesc, String longDesc, String imageURL) {
         this.ID = ID;
         this.name = name;

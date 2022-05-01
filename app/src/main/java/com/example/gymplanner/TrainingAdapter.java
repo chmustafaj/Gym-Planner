@@ -22,7 +22,6 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 
 public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHolder> {
-    private static final String TAG = "TrainingAdapter";
 
     private ArrayList<Training> trainings = new ArrayList<>();
     private Context context;
@@ -40,7 +39,6 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        Log.d(TAG, "onBindViewHolder: Called");
 
         holder.name.setText(trainings.get(position).getName());
         holder.description.setText(trainings.get(position).getShortDesc());

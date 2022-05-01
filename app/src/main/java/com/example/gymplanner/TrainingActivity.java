@@ -4,9 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,8 +23,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+
 public class TrainingActivity extends AppCompatActivity implements PlanDetailDialog.PassPlanInterface {
-    private static final String TAG = "Training Activity";
     private TextView txtName, txtDescription;
     private Button btnAddToPlan;
     private ImageView image;
@@ -69,8 +75,13 @@ public class TrainingActivity extends AppCompatActivity implements PlanDetailDia
 
     @Override
     public void getPlan(Plan plan) {
-        Log.d(TAG, "getPlan: Plan " + plan.toString());
-        Utils.addPlan(plan);
+        DataBaseHelper dataBaseHelper;
+        dataBaseHelper = new DataBaseHelper(TrainingActivity.this);
+
+        SQLiteDatabase db=dataBaseHelper.getWritableDatabase();
+        Intent intent = getIntent();
+        Training training = intent.getParcelableExtra(TRAINING_KEY);
+        dataBaseHelper.insert(db,"plans",training.getID(),plan.getMinutes(),plan.getDay(),plan.isAccomplished());
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -83,4 +94,5 @@ public class TrainingActivity extends AppCompatActivity implements PlanDetailDia
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

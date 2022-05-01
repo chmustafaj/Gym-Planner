@@ -2,18 +2,20 @@ package com.example.gymplanner;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 public class Plan implements Parcelable {
+    private static int count=1;
+    private int id =0;
     private Training training;
     private int minutes;
     private String day;
-    private Boolean isAccomplished;
+    private int isAccomplished;
 
-    public Plan(Training training, String day, int minutes, Boolean isAccomplished) {
+    public Plan(Training training, String day, int minutes, int isAccomplished) {
         this.training = training;
         this.day = day;
         this.minutes = minutes;
         this.isAccomplished = isAccomplished;
+        this.id = id++;
     }
 
     protected Plan(Parcel in) {
@@ -21,7 +23,8 @@ public class Plan implements Parcelable {
         day = in.readString();
         minutes = in.readInt();
         byte tmpIsAccomplished = in.readByte();
-        isAccomplished = tmpIsAccomplished == 0 ? null : tmpIsAccomplished == 1;
+        isAccomplished = in.readInt();
+        id=in.readInt();
     }
 
     public static final Creator<Plan> CREATOR = new Creator<Plan>() {
@@ -36,10 +39,13 @@ public class Plan implements Parcelable {
         }
     };
 
+    public Plan() {
+    }
+
     public Training getTraining() {
         return training;
     }
-
+    public int getId(){return id;}
     public void setTraining(Training training) {
         this.training = training;
     }
@@ -47,7 +53,9 @@ public class Plan implements Parcelable {
     public String getDay() {
         return day;
     }
-
+    public void setId(int id){
+        this.id= id;
+    }
     public void setDay(String day) {
         this.day = day;
     }
@@ -60,13 +68,14 @@ public class Plan implements Parcelable {
         this.minutes = minutes;
     }
 
-    public Boolean isAccomplished() {
+    public int isAccomplished() {
         return isAccomplished;
     }
 
-    public void setAccomplished(Boolean accomplished) {
+    public void setAccomplished(int accomplished) {
         isAccomplished = accomplished;
     }
+
 
     @Override
     public String toString() {
@@ -88,6 +97,6 @@ public class Plan implements Parcelable {
         dest.writeParcelable(training, flags);
         dest.writeString(day);
         dest.writeInt(minutes);
-        dest.writeByte((byte) (isAccomplished == null ? 0 : isAccomplished ? 1 : 2));
+        dest.writeInt(isAccomplished);
     }
 }

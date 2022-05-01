@@ -2,6 +2,7 @@ package com.example.gymplanner;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,11 +47,12 @@ public class PlanDetailDialog extends DialogFragment {
                     }
                 });
                 btnAdd.setOnClickListener(new View.OnClickListener() {
+
                     @Override
                     public void onClick(View v) {
                         String day = spinnerDay.getSelectedItem().toString();
                         int minutes = Integer.valueOf(edtTxtMinutes.getText().toString());
-                        Plan plan = new Plan(training, day, minutes, false);
+                        Plan plan = new Plan(training, day, minutes, 0);
                         try {
                             passPlanInterface = (PassPlanInterface) getActivity();
                             passPlanInterface.getPlan(plan);

@@ -5,6 +5,9 @@
       <map>
         <entry key="..\:/Programming/Android Projects/GymPlanner/app/src/main/res/layout/activity_main.xml" value="0.25625" />
         <entry key="..\:/Programming/Android Projects/GymPlanner/app/src/main/res/layout/activity_plan.xml" value="0.25625" />
+        <entry key="..\:/Programming/AndroidProjects/GymPlanner/app/src/main/res/drawable/dialog_bg.xml" value="0.1" />
+        <entry key="..\:/Programming/AndroidProjects/GymPlanner/app/src/main/res/layout/activity_edit.xml" value="0.14635416666666667" />
+        <entry key="..\:/Programming/AndroidProjects/GymPlanner/app/src/main/res/layout/dialog_plan_details.xml" value="0.264" />
         <entry key="..\:/Programming/GymPlanner/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.27239583333333334" />
         <entry key="..\:/Programming/GymPlanner/app/src/main/res/drawable/ic_baseline_radio_button_unchecked_24.xml" value="0.27239583333333334" />
         <entry key="..\:/Programming/GymPlanner/app/src/main/res/drawable/ic_checked_circle.xml" value="0.27239583333333334" />

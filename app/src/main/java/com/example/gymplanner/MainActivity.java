@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
                 = new ColorDrawable(Color.parseColor("#00aaff"));
         actionBar.setBackgroundDrawable(colorDrawable);
         initViews();
-        Utils.initTraining();
+
         btnAllTrainings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

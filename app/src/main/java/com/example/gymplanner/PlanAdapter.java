@@ -5,6 +5,10 @@ import static com.example.gymplanner.TrainingActivity.TRAINING_KEY;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +26,15 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 
 public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
+    private static final String TAG = "";
+
     public interface RemovePlan {
         void onRemovePlanResult(Plan plan);
     }
-
+    public interface Accomplished{
+        void setAccomplished(Plan plan);
+    }
+    private Accomplished accomplished;
     private RemovePlan removePlan;
     private ArrayList<Plan> plans = new ArrayList<>();
     private Context context;
@@ -48,7 +57,9 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
         holder.txtDescription.setText(plans.get(position).getTraining().getShortDesc());
         holder.txtTime.setText(String.valueOf(plans.get(position).getMinutes()));
         Glide.with(context).asBitmap().load(plans.get(position).getTraining().getImageURL()).into(holder.image);
-        if (plans.get(position).isAccomplished()) {
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(context);
+        SQLiteDatabase db = dataBaseHelper.getReadableDatabase();
+        if (dataBaseHelper.checkAccomplished(db,"plans",plans.get(position).getId())) {
             holder.emptyCircle.setVisibility(View.GONE);
             holder.checkedCircle.setVisibility(View.VISIBLE);
         } else {
@@ -78,9 +89,15 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
                             }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    for (Plan p : Utils.getPlans()) {
-                                        if (p.equals(plans.get(position))) {
-                                            p.setAccomplished(true);
+                                    ArrayList<Plan> allPlans =getAllPlans();
+                                    for (Plan p : allPlans) {
+                                        if (p.getId()==(plans.get(position).getId())) {
+                                            try{
+                                                accomplished = (Accomplished) context;
+                                                accomplished.setAccomplished(p);
+                                            }catch (ClassCastException c){
+                                                c.printStackTrace();
+                                            }
                                         }
                                     }
                                     notifyDataSetChanged();
@@ -151,4 +168,75 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
             checkedCircle = itemView.findViewById(R.id.checkedCircle);
         }
     }
+    private ArrayList<Plan> getAllPlans(){
+        ArrayList<Plan> plans = new ArrayList<>();
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(context);
+        SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+        Cursor c=sqLiteDatabase.rawQuery("SELECT * FROM plans",null);
+        if(c!=null){
+            if(c.moveToFirst()){
+                for(int i =0;i<c.getCount();i++){
+                    Plan p = new Plan();
+                    int id =c.getInt(c.getColumnIndexOrThrow("id"));
+                    int trainingId = c.getInt(c.getColumnIndexOrThrow("trainingId"));
+                    Training t = trainingById(trainingId);
+                    int minutes = c.getInt(c.getColumnIndexOrThrow("minutes"));
+                    String day = c.getString(c.getColumnIndexOrThrow("day"));
+                    int isAccomplished = c.getInt(c.getColumnIndexOrThrow("isAccomplished"));
+                    p.setAccomplished(isAccomplished);
+                    p.setDay(day);
+                    p.setId(id);
+                    p.setTraining(t);
+                    p.setMinutes(minutes);
+                    plans.add(p);
+                    c.moveToNext();
+
+                }
+                c.close();
+                sqLiteDatabase.close();
+            }else{
+                c.close();
+                sqLiteDatabase.close();
+            }
+        }else{
+            sqLiteDatabase.close();
+        }
+        return plans;
+    }
+    public  Training trainingById(int id){
+        String ID= String.valueOf(id);  //sql takes commands in strings
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(context);
+        try{
+            SQLiteDatabase sqLiteDatabase = dataBaseHelper.getReadableDatabase();
+            Cursor cursor = sqLiteDatabase.rawQuery(" select * from trainings where id="+ID,null);
+            if(cursor!=null){
+                if(cursor.moveToFirst()){
+                    Training t = new Training();
+                    int trainingID=cursor.getInt(cursor.getColumnIndex("id"));
+                    String name=cursor.getString(cursor.getColumnIndex("name"));
+                    String shortDesc=cursor.getString(cursor.getColumnIndex("shortDesc"));
+                    String longDesc=cursor.getString(cursor.getColumnIndex("longDesc"));
+                    String imageURL=cursor.getString(cursor.getColumnIndex("imageUrl"));
+                    t.setImageURL(imageURL);
+                    t.setLongDesc(longDesc);
+                    t.setName(name);
+                    t.setID(trainingID);
+                    t.setShortDesc(shortDesc);
+                    cursor.close();
+                    sqLiteDatabase.close();
+                    return t;
+
+                }else{
+                    cursor.close();
+                    sqLiteDatabase.close();
+                }
+            }else{
+                sqLiteDatabase.close();
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
