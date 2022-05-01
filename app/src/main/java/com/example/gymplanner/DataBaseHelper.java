@@ -22,7 +22,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String sqlStatement = "create table trainings(id integer primary key autoincrement,name varchar,shortDesc text" +
                 ",longDesc text, imageUrl text)";
         sqLiteDatabase.execSQL(sqlStatement);
-        String sqlStatement2 = "create table plans(id integer primary key autoincrement, trainingId integer,minutes integer,day text,isAccomplished integer)";
+        String sqlStatement2 = "create table plans(id integer primary key autoincrement,trainingId integer,minutes integer,day text,isAccomplished integer)";
         sqLiteDatabase.execSQL(sqlStatement2);
         initDatabase(sqLiteDatabase);
     }
